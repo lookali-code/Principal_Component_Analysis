@@ -1,0 +1,71 @@
+#Set file path
+setwd("M:/Datasets")
+ft <- read.table("fturtle.txt", header = TRUE)
+#this file contatins data from 24 turtles (length,width and height)
+ft[1:6, ]  # View the first few rows.
+
+s <- var(ft)
+
+eigs <- eigen(s)
+
+eigs
+#We can use this next line to carry out principle component analysis
+pcdat <- princomp(ft)
+
+summary(pcdat, loadings = TRUE)
+
+plot(pcdat)  
+#same but using the correlation matrix rather than the covariance matrix
+pcdatcor <- princomp(ft, cor = TRUE)
+summary(pcdatcor, loadings = TRUE)
+
+#Now we can carry out PCA on  data on the number of people per car, TV, telephone and radio for a number of different countries during the time period 1986-1988.
+pp <- read.table("peper.txt", header = TRUE)
+
+head(pp)  # View the first few rows.
+pp <-pp[ ,3:6]
+pcdat <- princomp(pp)
+summary(pcdat, loadings = TRUE)
+#this suggests that the first 2 PCs contain 99% of the variance
+#a country with a big Y1 will have a lot of tvs per person
+#a country with a big Y2 has a big contrast between cars per person and tvs per person. so it would have lots of cars but not many tvs
+#Y3 is a measure of tele (or arguavly a contrast between tele and car)
+#Y4 is a measure of radios
+#countries vary most in televsions then contrast between cars and tvs, then contrast between cars and tele and then radios
+
+#now use the correlation matrix 
+pcdatcor <- princomp(pp, cor = TRUE)
+summary(pcdatcor, loadings = TRUE)
+#Y1 is a measure of tele but still quite high in others 
+#Y2 is a measure of contrast between radio and tv
+#Y3 a measure of contrast between radio and car
+#Y4 a measure of contrast between telephone and cars
+
+
+#the sample covariance explains 99% of the variance in only 2 PC and thus reduces the amount of variables better than the correlation PCA
+#however the second includes the radio more (which by the first either has large or small variance probably large)
+#I would pick the correlation PCA in this case as transforming the units is not an issue
+
+#we will now look at weekly rates of return for three chemical stocks (Allied Chemical, du Pont and Union Carbide) and two oil stocks (Exxon and Texaco) listed on the New York Stock Exchange were determined for the period January 1975 through December 1976.
+stock <- read.table("stock.txt", header = T)
+# we will focus on looking at the proportion of variance that each principal component accounts for
+head(stock)   # View the first few rows.
+pcdatcor <- princomp(stock,cor =TRUE)
+summary(pcdatcor, loadings = TRUE)
+#Looking at this I would use the first 3 PCs as they explain about 80% of the variance
+#Alternatively a scree plot can be used to decide how many PCs to use (look at the crook of the 'elbow')
+plot(pcdatcor, main = "Scree diagram from correlations", type = "line")
+#Personally I find this method too subjective and in this case proves difficult as it could either be the second or third PC
+
+#PC1 is an overall measure of all stocks
+#PC2 is a contrast between the oil and chemical stocks (mainly DuPont)
+
+#Lets perform PCA on data that contains some anthropometric measurements (body measurements) of 30
+#pupils in a secondary school.
+an <- read.table("anthrop.txt", header = T)
+
+head(an)
+pcdatcor <- princomp(an,cor =TRUE)
+summary(pcdatcor, loadings = TRUE)
+#I would choose 1 principal component as it explains 88.% of the variance whilst the second component only explains 7%
+#PC1 is an overall measure that is large when the person is big (tall,heavy,big chest,long torso)
